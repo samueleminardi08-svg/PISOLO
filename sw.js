@@ -1,16 +1,10 @@
-const CACHE_NAME = 'pisolo-micio-cache-v10';
+const CACHE_NAME = 'pisolo-micio-cache-v11';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/backgrounds_data.js',
   '/manifest.json',
-  '/icon.svg',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/icon-180.png',
-  '/apple-touch-icon.png',
-  '/apple-touch-icon-precomposed.png',
-  '/favicon.png',
+  '/icon-10.jpg',
   '/assets/shark_1.jpg',
   '/assets/kitty_1.jpg',
   '/assets/photo_featured.jpg',
