@@ -1,0 +1,82 @@
+{
+  "name": "PISOLO & MICIO",
+  "short_name": "PISOLO",
+  "description": "Spazio sicuro di dolcezza, frasi sincere, foto speciali e coccole da Pisolo lo squaletto e Micio il gattino.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "id": "/index.html",
+  "display": "standalone",
+  "display_override": ["standalone", "fullscreen", "minimal-ui", "browser"],
+  "orientation": "portrait-primary",
+  "background_color": "#FFF5F7",
+  "theme_color": "#FFF5F7",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ho bisogno di un abbraccio",
+      "short_name": "Abbraccio ❤️",
+      "description": "Ricevi un abbraccio caldo da Pisolo e Micio",
+      "url": "/index.html?action=hug",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Fai un respiro profondo",
+      "short_name": "Respira 🌸",
+      "description": "Esercizio di respirazione rilassante guidato",
+      "url": "/index.html?action=breathe",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Foto di Pisolo e Micio",
+      "short_name": "Foto 📸",
+      "description": "Sfoglia gli 8 ritratti di Pisolo e Micio",
+      "url": "/index.html?action=photos",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["lifestyle", "wellness", "personalization"]
+}

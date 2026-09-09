@@ -1,0 +1,6 @@
+{
+  "name": "PISOLO",
+  "description": "Un abbraccio digitale per farti compagnia e coccolarti nei momenti in cui non stai bene.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
