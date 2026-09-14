@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FFF5F7">
+  
+  <!-- PWA & Web App Capabilities -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="1024x1024" href="./icon.png">
+  <link rel="shortcut icon" type="image/png" href="./icon.png">
+  
+  <!-- Apple iOS Touch Icons (Schermata Home iOS) -->
+  <link rel="apple-touch-icon" href="./icon.png">
+  <link rel="apple-touch-icon-precomposed" href="./icon.png">
+
+  <!-- Mobile Fullscreen / Standalone -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PISOLO">
+  <meta name="application-name" content="PISOLO">
+  
+  <title>PISOLO & MICIO 🦈🐱 - Spazio Sicuro & App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="locked">
+  <!-- Livelli di sfondo rilassante e velatura morbida per massima tranquillità visiva -->
+  <div id="app-ambient-bg" class="ambient-bg-layer" aria-hidden="true"></div>
+  <div id="app-ambient-overlay" class="ambient-overlay-layer" aria-hidden="true"></div>
+
+  <script>
+    // Controllo immediato sessione prima del rendering visivo
+    if (localStorage.getItem('pisolo_pwa_auth') === 'true') {
+      document.body.classList.remove('locked');
+    }
+  </script>
+
+  <!-- ============================================================
+       SCHERMATA DI LOGIN / ACCESSO PRIVATO CON PASSWORD
+       ============================================================ -->
+  <div class="login-screen-overlay" id="login-screen">
+    <div class="login-card">
+      <div class="login-mascot-duo">
+        <div class="login-avatar-circle" title="Pisolo 🦈">
+          <span style="font-size: 32px;">🦈</span>
+        </div>
+        <div style="font-size: 22px; color: var(--pastel-pink); animation: pulseSoft 2s infinite alternate;">❤️</div>
+        <div class="login-avatar-circle" title="Micio 🐱">
+          <span style="font-size: 32px;">🐱</span>
+        </div>
+      </div>
+      <div class="login-title">PISOLO &amp; MICIO</div>
+      <div class="login-subtitle">
+        Questo è il tuo spazio privato e sicuro.<br>Inserisci la password per entrare:
+      </div>
+      <form onsubmit="handleLoginSubmit(event)" style="width: 100%; margin: 0;">
+        <div class="login-input-group">
+          <input type="password" class="login-input" id="login-password-input" placeholder="Password di accesso..." autocomplete="current-password" required>
+          <button type="button" class="login-toggle-eye" id="login-eye-btn" onclick="togglePasswordVisibility()" title="Mostra o nascondi password">👁️</button>
+        </div>
+        <button type="submit" class="login-btn-submit">
+          <span>Entra nell'app</span>
+          <span>❤️</span>
+        </button>
+        <div class="login-error-text" id="login-error-msg">Password non corretta. Riprova con calma 🌸</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mascotte decorative soffuse di sfondo -->
+  <div class="ambient-mascot-bg ambient-shark-corner" title="Pisolo 🦈">🦈</div>
+  <div class="ambient-mascot-bg ambient-kitty-corner" title="Micio 🐱">🐱</div>
+
+  <!-- ============================================================
+       MODALE ACCOGLIENZA (Promemoria caloroso di chiamare il ragazzo)
+       ============================================================ -->
+  <div class="welcome-overlay" id="welcome-modal">
+    <div class="welcome-card">
+      <div class="welcome-mascots-duo">
+        <div class="welcome-avatar-circle" title="Pisolo lo squaletto">
+          <img id="welcome-shark-img" src="assets/img_01_0a586335395e.jpg" alt="Pisolo">
+        </div>
+        <div class="welcome-heart-connector">❤️</div>
+        <div class="welcome-avatar-circle" title="Micio il gattino">
+          <img id="welcome-kitty-img" src="assets/img_02_80bf04a43bbc.jpg" alt="Micio">
+        </div>
+      </div>
+      <div class="welcome-title">Piccolo promemoria d'amore</div>
+      <div class="welcome-body">
+        Ciao piccola mia. Ricordati sempre che <strong>la cosa che desidero di più è sentirti direttamente</strong>. 
+        Se c'è qualcosa che non va, se ti senti giù o se hai solo bisogno di me, scrivimi o chiamami appena puoi: per te ci sono sempre.<br><br>
+        Ho preparato quest'app con Pisolo e Micio per farti compagnia e darti una carezza <em>nei momenti in cui siamo lontani</em>. 💕
+      </div>
+      <div class="welcome-actions">
+        <div style="display:flex; gap:8px; width:100%;">
+          <button type="button" class="btn-contact-me" style="flex:1;" onclick="openPartnerChat()">
+            <span>💬</span> Scrivi o chiama il tuo ragazzo
+          </button>
+          <button type="button" onclick="editPartnerPhone()" title="Imposta numero" style="background:var(--surface-subtle); border:1px solid var(--warm-outline); border-radius:var(--radius-md); padding:0 12px; cursor:pointer; font-size:16px;">
+            ⚙️
+          </button>
+        </div>
+        <button type="button" class="btn-enter-app" onclick="dismissWelcomeModal()">
+          Entra nell'app con Pisolo & Micio
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- ============================================================
+         HEADER PRINCIPALE CON MASCOTTE SQUALETTO & GATTINO
+         ============================================================ -->
+    <div class="card" id="sec-home">
+      <div class="header-content">
+
+        <div class="header-row-top">
+          <div class="header-title-box">
+            <h1>PISOLO & MICIO <span>❤️</span></h1>
+            <div class="header-subtitle" id="header-mascot-status">Il tuo porto sicuro e silenzioso con Pisolo & Micio</div>
+          </div>
+          <!-- Avatar di Pisolo & Micio -->
+          <div class="mascot-avatar-toggle" id="mascot-avatar-box" title="Pisolo e Micio">
+            <img id="mascot-avatar-img" src="assets/img_01_0a586335395e.jpg" alt="Mascotte">
+            <div class="mascot-badge-switch" id="mascot-badge-name">Pisolo 🦈</div>
+          </div>
+        </div>
+
+        <!-- Nuvoletta con pensieri delicati che si alternano -->
+        <div class="mascot-speech-container" onclick="nextDelicateQuote()" title="Tocca per cambiare pensiero">
+          <div class="speech-label-group">
+            <span class="speech-mascot-emoji" id="speech-mascot-icon">🦈</span>
+            <span class="speech-text-val" id="mascot-quote-display">"Prenditi tutto il tempo che ti serve: non devi correre."</span>
+          </div>
+          <span class="refresh-mini-icon">🔄</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Promemoria per aprirsi con il ragazzo -->
+    <div class="partner-welcome-ribbon" onclick="reopenWelcomeModal()" title="Tocca per rileggere il promemoria">
+      <div class="ribbon-avatar-pair">
+        <span style="font-size:24px;">🦈</span>
+        <span style="font-size:24px; margin-left:-6px;">🐱</span>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size:13.5px; font-weight:800; color:var(--deep-rose);">Se hai un peso sul cuore, scrivimi sempre 💕</div>
+        <div style="font-size:11.5px; color:var(--warm-text-secondary); line-height:1.35;">Non devi tenere tutto per te: per te ci sono in ogni momento.</div>
+      </div>
+      <span style="font-size:16px; color:var(--deep-rose);">💌</span>
+    </div>
+
+    <!-- ============================================================
+         ABBRACCIO VIRTUALE & MESSAGGIO DEL GIORNO (IN PRIMO PIANO)
+         ============================================================ -->
+    <div class="card" id="sec-featured-msg">
+      <div class="featured-message-body">
+        <div class="featured-photo-holder">
+          <img id="featured-photo-img" src="" alt="Foto del giorno" style="transition: opacity 0.2s ease;">
+        </div>
+
+        <div class="featured-card-actions" style="margin-top: 0; margin-bottom: 14px;">
+          <button class="btn-open-hug" onclick="openHugModal()" title="Ricevi un abbraccio caldo con una foto speciale">
+            <span>Ho bisogno di un abbraccio</span>
+            <span style="font-size: 18px;">🫂❤️</span>
+          </button>
+        </div>
+
+        <div style="text-align:center; min-height: 20px;">
+          <span id="ai-quote-badge" class="ai-generated-badge" style="display:none;">✨ Creata per te con Gemini IA</span>
+        </div>
+
+        <div class="featured-quote-text" id="featured-quote-text">
+          “So che ci sono momenti in cui tutto sembra pesare un po' di più e trovare le energie è faticoso. Ma tu non sei sola: io sono qui, silenziosamente al tuo fianco.”
+        </div>
+
+        <div class="featured-signature-text" id="featured-signature-text">
+          — Chi ti vuole un bene infinito
+        </div>
+      </div>
+    </div>
+
+    <!-- ESERCIZIO DI RESPIRAZIONE GUIDATA 4-4-4 -->
+    <div class="breathing-feature-card" onclick="openBreathingModal()" id="sec-breath-card">
+      <div class="breath-lead-info">
+        <div class="breath-pill-tag">
+          <span>🫁</span> Esercizio di calma
+        </div>
+        <div class="breath-lead-title">Senti il fiato corto o troppi pensieri?</div>
+        <div class="breath-lead-sub">60 secondi di respiro 4-4-4 guidato da Pisolo e Micio per rilassare il corpo.</div>
+      </div>
+      <div class="breath-lead-play">
+        ▶
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FINESTRA SUL TUO LUOGO DI PACE (Panoramica Fotografica Naturale)
+         ============================================================ -->
+    <div class="card place-hero-card" id="place-hero-card" style="padding:0; overflow:hidden; border-radius:24px; position:relative; box-shadow:0 8px 26px rgba(0,0,0,0.08); border:1px solid rgba(255,255,255,0.92);">
+      <div id="place-hero-img" style="width:100%; height:185px; background-size:cover; background-position:center; position:relative; transition:background-image 0.4s ease;">
+        <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.58) 100%);"></div>
+        <div style="position:absolute; top:12px; left:14px; background:rgba(255,255,255,0.92); backdrop-filter:blur(8px); padding:4px 10px; border-radius:12px; font-size:11.5px; font-weight:700; color:var(--deep-rose); display:flex; align-items:center; gap:5px; box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+          <span>🌿</span> Il tuo Luogo di Pace oggi
+        </div>
+        <div style="position:absolute; bottom:12px; left:14px; right:14px; background:rgba(255,255,255,0.95); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); padding:10px 14px; border-radius:16px; border:1px solid rgba(255,255,255,0.98); box-shadow:0 4px 16px rgba(0,0,0,0.18);">
+          <div style="font-size:17.5px; font-weight:800; color:var(--warm-text-primary); display:flex; align-items:center; gap:7px;">
+            <span id="place-hero-emoji">🏞️</span> <span id="place-hero-title">Lago Quieto</span>
+          </div>
+          <div id="place-hero-desc" style="font-size:12.5px; color:var(--warm-text-secondary); margin-top:2px; font-weight:600;">Lago alpino immobile e trasparente all'aurora</div>
+        </div>
+      </div>
+      <div style="padding:10px 14px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.86); backdrop-filter:blur(10px);">
+        <span style="font-size:11.5px; color:var(--warm-text-secondary); font-weight:600;">🌾 Sfondo naturale a tutto schermo</span>
+        <div style="display:flex; gap:8px;">
+          <button type="button" onclick="cycleNextBackground()" style="background:white; border:1px solid var(--warm-outline); border-radius:14px; padding:6px 11px; font-size:11.5px; font-weight:700; color:var(--warm-text-primary); cursor:pointer;">
+            🔄 Cambia
+          </button>
+          <button type="button" onclick="openBackgroundPickerModal()" style="background:linear-gradient(135deg, var(--deep-rose), var(--pastel-pink)); color:white; border:none; border-radius:14px; padding:6px 13px; font-size:11.5px; font-weight:700; cursor:pointer; box-shadow:0 2px 6px rgba(216,27,96,0.28);">
+            🏖️ Tutti i 10 Luoghi
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         3. CONSIGLI & GESTI DI CURA PERSONALE (Circa 40 consigli, nuovi ad ogni accesso e contrassegnabili)
+         ============================================================ -->
+    <div id="sec-tips">
+      <div class="section-title-wrap" style="justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">🌿</span>
+          <div>
+            <h2>Piccoli gesti per te</h2>
+            <p>5 gesti semplici e contrassegnabili per volerti bene: nuovi ad ogni tuo accesso</p>
+          </div>
+        </div>
+        <div class="tips-header-actions">
+          <button type="button" class="btn-shuffle-tips" onclick="generateAiTip()" title="Fai creare a Gemini un nuovo gesto di cura personalizzato" style="background:linear-gradient(135deg, #F3E8FF, #FCE4EC); border-color:#D8B4FE; color:#6B21A8; font-weight:700;">
+            <span>✨</span> Gesto con IA
+          </button>
+          <button type="button" class="btn-shuffle-tips" onclick="shuffleComfortTips()" title="Estrai una nuova selezione di 5 gesti">
+            <span>🔄</span> Nuovi 5 gesti
+          </button>
+          <button type="button" class="btn-view-all-tips" id="btn-view-all-tips-toggle" onclick="toggleViewAllTips()" title="Mostra tutti i 42 consigli">
+            <span>📋</span> Tutti (42)
+          </button>
+        </div>
+      </div>
+
+      <!-- Scheda di avanzamento dei gesti completati -->
+      <div class="tips-progress-card">
+        <div class="tips-progress-header">
+          <span id="tips-progress-text">✨ Gesti completati: <strong>0 su 5</strong></span>
+          <button type="button" class="tips-reset-btn" onclick="resetCheckedTips()" title="Azzera i contrassegni dei gesti">Azzera</button>
+        </div>
+        <div class="tips-progress-track">
+          <div class="tips-progress-fill" id="tips-progress-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- Filtri per categoria -->
+      <div class="filter-pills-row" id="filter-pills-container">
+        <!-- JS -->
+      </div>
+
+      <!-- Lista dei consigli -->
+      <div class="tips-list-container" id="tips-list-container">
+        <!-- JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         4. SPAZIO DI SFOGO / DIARIO PRIVATO
+         ============================================================ -->
+    <div class="venting-box" id="sec-vent">
+      <div class="venting-top-bar">
+        <div class="venting-tag-label">
+          <span>✍️</span> SPAZIO PER I TUOI PENSIERI
+        </div>
+        <div class="venting-clear-trigger" id="vent-clear-btn" onclick="clearVentingText()">
+          CANCELLA
+        </div>
+      </div>
+
+      <textarea
+        id="vent-text-input"
+        class="venting-input-area"
+        placeholder="Se hai dentro qualcosa che ti fa male, ti preoccupa o ti pesa, puoi scriverlo qui liberamente. Non verrà salvato da nessuna parte..."
+        oninput="handleVentingInput()"
+      ></textarea>
+
+      <div class="venting-actions-bar">
+        <div class="venting-privacy-note">
+          <span>🔒</span> Questo testo resta solo sul tuo schermo
+        </div>
+        <button id="vent-submit-btn" class="btn-sea-release" disabled onclick="releaseThoughtsToSea()">
+          🌊 Lascia andare nel mare
+        </button>
+      </div>
+
+      <div class="vent-feedback-msg" id="vent-feedback-box">
+        ✨ I pensieri che pesavano sono scivolati via tra le onde con Pisolo e Micio. Adesso respira con calma: sei al sicuro. 🫧
+      </div>
+    </div>
+
+    <!-- FOOTER CALDO -->
+    <div style="text-align: center; padding: 10px 0 6px;">
+      <div style="font-size: 12.5px; color: var(--warm-text-secondary); font-weight: 500;">
+        Fatto per te con tutto l'affetto possibile ❤️
+      </div>
+      <div style="font-size: 11px; color: var(--pastel-pink); margin-top: 3px;">
+        Pisolo 🦈 & Micio 🐱 • Sempre al tuo fianco
+      </div>
+      <div style="margin-top: 8px;">
+        <span onclick="openAutonomousLinkModal()" style="font-size: 11px; color: var(--pastel-blue-accent); font-weight: 700; cursor: pointer; text-decoration: underline;">
+          🔗 Link sempre autonomo e istruzioni App
+        </span>
+      </div>
+      <div style="margin-top: 6px;">
+        <span onclick="logoutApp()" style="font-size: 11px; color: var(--warm-text-secondary); cursor: pointer; text-decoration: underline;">
+          🔒 Blocca app con password
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================================================
+       BARRA DI NAVIGAZIONE IN BASSO (TAB CHIARE & FLUIDE)
+       ============================================================ -->
+  <nav class="bottom-navbar">
+    <button class="nav-tab-btn active" onclick="smoothNavTo('sec-home', this)">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label">Home</span>
+    </button>
+    <button class="nav-tab-btn" onclick="smoothNavTo('sec-tips', this)">
+      <span class="tab-icon">🌿</span>
+      <span class="tab-label">Consigli</span>
+    </button>
+    <button class="nav-tab-btn" onclick="smoothNavTo('sec-vent', this)">
+      <span class="tab-icon">✍️</span>
+      <span class="tab-label">Diario</span>
+    </button>
+  </nav>
+
+  <!-- ============================================================
+       MODALE LIGHTBOX FOTO
+       ============================================================ -->
+  <div class="modal-backdrop" id="modal-lightbox-backdrop" onclick="closePhotoLightbox(event)">
+    <div class="modal-box-card" onclick="event.stopPropagation()">
+      <div class="modal-top-bar">
+        <div class="modal-pill-tag">
+          <span>📸</span>
+          <span id="lightbox-title-tag">Ricordo Speciale</span>
+        </div>
+        <button class="modal-close-trigger" onclick="closePhotoLightbox()">✕</button>
+      </div>
+      <div class="lightbox-img-holder">
+        <img id="lightbox-img-el" src="" alt="Foto ingrandita">
+      </div>
+      <div style="font-size: 15px; font-weight: 700; color: var(--warm-text-primary); text-align: center; margin-bottom: 4px;" id="lightbox-caption-el"></div>
+      <div style="font-size: 12px; color: var(--warm-text-secondary); text-align: center; margin-bottom: 14px;" id="lightbox-date-el"></div>
+      <div style="display:flex; gap:8px;">
+        <button class="modal-btn-tonal" onclick="setLightboxAsFeatured()">
+          ⭐ Metti come Copertina
+        </button>
+        <button class="modal-btn-primary" onclick="closePhotoLightbox()">
+          Chiudi 💕
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODALE ABBRACCIO VIRTUALE
+       ============================================================ -->
+  <div class="modal-backdrop" id="modal-hug-backdrop" onclick="closeHugModal(event)">
+    <div class="modal-box-card" onclick="event.stopPropagation()">
+      <div class="modal-top-bar">
+        <div class="modal-pill-tag">
+          <span style="color: var(--heart-red);">❤️</span>
+          <span id="modal-tag-el">Abbraccio sincero</span>
+        </div>
+        <button class="modal-close-trigger" onclick="closeHugModal()">✕</button>
+      </div>
+
+
+
+      <div style="width:100%; height:200px; border-radius:var(--radius-md); overflow:hidden; margin-bottom:14px; position:relative; box-shadow:var(--shadow-sm);">
+        <img id="modal-photo-el" src="" alt="Foto abbraccio" style="width:100%; height:100%; object-fit:cover; transition:opacity 0.2s ease;">
+      </div>
+      <div style="font-size:18px; font-weight:800; color:var(--warm-text-primary); text-align:center;" id="modal-title-el">Ti stringo forte forte</div>
+      <div style="font-size:14.5px; color:var(--warm-text-primary); line-height:1.6; margin:10px 0; text-align:center;" id="modal-body-el">
+        Fai un respiro lento. Non c'è niente che tu debba dimostrare a nessuno adesso. Sei amatissima e io ci sono sempre per te.
+      </div>
+      <div style="font-size:13px; color:var(--pastel-pink); font-style:italic; font-weight:700; text-align:center; margin-bottom:18px;" id="modal-sig-el">
+        💌 Con tutto il mio amore
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button class="modal-btn-tonal" onclick="cycleNextHugMessage()">
+          <span>🔄</span> Altro abbraccio
+        </button>
+        <button class="modal-btn-primary" onclick="thankYouHug()">
+          Grazie ❤️
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODALE RESPIRAZIONE GUIDATA 4-4-4
+       ============================================================ -->
+  <div class="modal-backdrop" id="modal-breath-backdrop" onclick="closeBreathingModal(event)">
+    <div class="breath-modal-card" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:6px; font-size:14px; font-weight:700; color:var(--pastel-blue-accent);">
+          <span id="breath-mascot-partner">🦈</span> Respirazione Guidata (4-4-4)
+        </div>
+        <button class="modal-close-trigger" onclick="closeBreathingModal()">✕</button>
+      </div>
+
+      <div class="breath-step-indicators">
+        <span class="breath-step-pill" id="b-step-prep" style="display:none; background:#FFE0B2; color:#E65100; font-weight:700;">⏳ Inizio in 5s</span>
+        <span class="breath-step-pill" id="b-step-0">1. Inspira</span>
+        <span class="breath-step-pill" id="b-step-1">2. Trattieni</span>
+        <span class="breath-step-pill" id="b-step-2">3. Espira</span>
+        <span class="breath-step-pill" id="b-step-3">4. Pausa</span>
+      </div>
+
+      <div class="breath-phase-circle" id="breath-animated-circle">
+        <div class="breath-center-icon" id="breath-center-icon">🌸</div>
+        <div class="breath-timer-val" id="breath-sec-value">4</div>
+      </div>
+
+      <div style="font-size:18px; font-weight:800; color:var(--warm-text-primary);" id="breath-step-title">
+        Inspira lentamente...
+      </div>
+      <div style="font-size:13.5px; color:var(--warm-text-secondary); margin-top:5px; margin-bottom:18px; line-height:1.45;" id="breath-step-desc">
+        Lascia che l'aria entri calma, riempiendo i polmoni senza forzare.
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button id="breath-toggle-btn" class="modal-btn-tonal" onclick="toggleBreathingRun()">
+          ⏸️ Pausa
+        </button>
+        <button class="modal-btn-primary" onclick="closeBreathingModal()">
+          Sto meglio 💕
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- (Modal Guida installazione rimosso su richiesta) -->
+
+  <!-- ============================================================
+       MODALE SCELTA LUOGHI DI PACE & SFONDI TRANQUILLI
+       ============================================================ -->
+  <div class="modal-backdrop" id="modal-bg-picker-backdrop" onclick="closeBackgroundPickerModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()" style="max-height:86vh; overflow-y:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="font-size:16px; font-weight:800; color:var(--deep-rose); display:flex; align-items:center; gap:8px;">
+          <span>🏖️</span> Luoghi di Pace &amp; Sfondi Rilassanti
+        </div>
+        <button class="modal-close-trigger" onclick="closeBackgroundPickerModal()">✕</button>
+      </div>
+      <div style="font-size:13px; color:var(--warm-text-secondary); line-height:1.45; margin-bottom:10px;">
+        Uno sfondo calmo e leggero, mai invasivo, per farti respirare serenità. Puoi sceglierne uno preferito oppure lasciarlo cambiare ad ogni accesso:
+      </div>
+
+      <div class="bg-picker-section-title">
+        <span>🌿</span> Scegli il tuo Luogo di Pace:
+      </div>
+      <div class="bg-picker-grid" id="bg-picker-nature-grid">
+        <!-- Generato dinamicamente con i 10 paesaggi -->
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button class="modal-btn-tonal" onclick="cycleNextBackground(); renderBackgroundPicker();" style="flex:1;">
+          🔄 Cambia a Caso
+        </button>
+        <button class="modal-btn-primary" onclick="closeBackgroundPickerModal()" style="flex:1;">
+          Chiudi e Rilassati 🌸
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODALE CELEBRAZIONE COMPLETAMENTO PICCOLI GESTI PER TE
+       ============================================================ -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="modal-backdrop" id="modal-tips-celebration-backdrop" onclick="closeTipsCelebrationModal(event)" style="z-index:99999;">
+    <div class="congrats-modal-card" onclick="event.stopPropagation()">
+      <div class="celebrate-mascot-row">
+        <span class="celebrate-mascot-avatar">🦈</span>
+        <span style="font-size:32px;">💖</span>
+        <span class="celebrate-mascot-avatar">🐱</span>
+      </div>
+
+      <div class="congrats-badge-pill">
+        <span>✨</span> 5 Gesti Completati con Successo! <span>🎉</span>
+      </div>
+
+      <h2 style="font-size:22px; font-weight:900; color:var(--deep-rose); margin-bottom:10px; line-height:1.25;">
+        Bravissima, piccola mia! ❤️
+      </h2>
+
+      <p style="font-size:14.5px; color:var(--warm-text-primary); line-height:1.55; margin-bottom:14px; font-weight:600;">
+        Hai completato tutti i <strong>5 gesti di cura</strong> che Pisolo e Micio hanno preparato per te! 🎉✨
+      </p>
+
+      <div style="background:var(--surface-subtle); border:1.5px dashed var(--pastel-pink-light); border-radius:18px; padding:14px; margin-bottom:18px; text-align:left;">
+        <div style="font-size:13.5px; color:var(--warm-text-primary); line-height:1.5; font-style:italic;">
+          "Prendersi cura di sé, anche con piccoli passi, è il regalo più bello che puoi farti. Io e i tuoi due amici siamo fieri di te!" 💕
+        </div>
+        <div style="font-size:11.5px; color:var(--deep-rose); font-weight:700; margin-top:6px; text-align:right;">
+          — Pisolo 🦈, Micio 🐱 &amp; il tuo ragazzo ❤️
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button type="button" class="modal-btn-primary" onclick="closeTipsCelebrationModal()" style="width:100%; padding:12px; font-size:14.5px; font-weight:800;">
+          Grazie di cuore, Pisolo &amp; Micio! 🌸
+        </button>
+        <button type="button" class="modal-btn-tonal" onclick="shuffleComfortTips(); closeTipsCelebrationModal();" style="width:100%; font-size:12.5px;">
+          🔄 Estrai 5 nuovi gesti per dopo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input file nascosti per caricamento foto -->
+  <input type="file" id="upload-gallery-input" accept="image/*" style="display:none;" onchange="handleGalleryUpload(event)">
+  <input type="file" id="upload-hero-input" accept="image/*" style="display:none;" onchange="handleHeroUpload(event)">
+
+  <!-- Canvas per compressione ultra-rapida delle foto -->
+  <canvas id="compress-canvas" style="display:none;"></canvas>
+
+  <!-- ============================================================
+       MODALE CHIAVE API GEMINI (100% PRIVATA & SICURA)
+       ============================================================ -->
+  <div class="modal-backdrop" id="modal-api-key-backdrop" onclick="closeApiKeyModal(event)" style="z-index:99999;">
+    <div class="modal-box-card" onclick="event.stopPropagation()" style="max-width:440px; text-align:left;">
+      <div class="modal-top-bar">
+        <div class="modal-pill-tag" style="background:#F3E8FF; color:#7E22CE; border:1px solid #D8B4FE;">
+          <span>🔑</span> Chiave IA &amp; Privacy
+        </div>
+        <button class="modal-close-trigger" onclick="closeApiKeyModal()">✕</button>
+      </div>
+
+      <div style="text-align:center; margin-bottom:14px;">
+        <div style="font-size:32px; margin-bottom:4px;">🔐✨</div>
+        <h3 style="font-size:18px; font-weight:800; color:var(--warm-text-primary); margin-bottom:4px;">La tua Chiave Gemini Privata</h3>
+        <p style="font-size:12px; color:var(--warm-text-secondary); line-height:1.4;">
+          Collega la tua chiave gratuita per generare dediche e consigli infiniti con Pisolo 🦈 e Micio 🐱.
+        </p>
+      </div>
+
+      <!-- Box Privacy & Sicurezza -->
+      <div style="background:rgba(240, 253, 244, 0.95); border:1.5px solid #86EFAC; border-radius:14px; padding:10px 12px; margin-bottom:14px; font-size:11.5px; color:#166534; line-height:1.45; display:flex; gap:8px; align-items:flex-start;">
+        <span style="font-size:16px;">🛡️</span>
+        <div>
+          <strong>Resta solo sul tuo dispositivo:</strong><br>
+          La tua chiave viene salvata <u>soltanto nella memoria del tuo browser/telefono</u> e non viene registrata in alcun file pubblico o inviata a server di terzi. Se però il dispositivo è condiviso con altre persone, chiunque acceda al browser può leggerla: evita di salvarla su telefoni o computer non tuoi.
+        </div>
+      </div>
+
+      <!-- Form Chiave -->
+      <div style="margin-bottom:12px;">
+        <label style="display:block; font-size:12px; font-weight:700; color:var(--warm-text-primary); margin-bottom:6px;">
+          Chiave API Google Gemini:
+        </label>
+        <div style="position:relative; display:flex; align-items:center;">
+          <input type="password" id="user-gemini-key-input" placeholder="Incolla qui la chiave (es. AIzaSy...)" autocomplete="off" style="width:100%; padding:11px 44px 11px 12px; border-radius:12px; border:1.5px solid var(--warm-outline); font-size:13px; font-family:monospace; background:var(--surface-white); outline:none; box-sizing:border-box;">
+          <button type="button" onclick="toggleApiKeyVisibility()" style="position:absolute; right:10px; background:none; border:none; cursor:pointer; font-size:15px; color:var(--warm-text-secondary);" title="Mostra o nascondi chiave">👁️</button>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" style="font-size:11px; color:var(--deep-rose); font-weight:700; text-decoration:none;">
+            👉 Ottieni chiave gratuita su Google AI Studio
+          </a>
+          <span id="api-key-status-indicator" style="font-size:11px; font-weight:700; color:#6B7280;">Non salvata</span>
+        </div>
+      </div>
+
+      <!-- Feedback test API Key -->
+      <div id="api-key-test-result" style="display:none; border-radius:12px; padding:8px 12px; margin-bottom:12px; font-size:12px; font-weight:600;"></div>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+        <button type="button" class="modal-btn-tonal" id="btn-test-api-key" onclick="testUserApiKey()" style="flex:1;">
+          🧪 Verifica Chiave
+        </button>
+        <button type="button" class="modal-btn-primary" onclick="saveUserApiKey()" style="flex:1;">
+          💾 Salva Chiave
+        </button>
+      </div>
+
+      <div style="margin-top:12px; text-align:center;">
+        <button type="button" onclick="removeUserApiKey()" style="background:none; border:none; color:#EF4444; font-size:11.5px; font-weight:700; cursor:pointer; padding:4px 8px;">
+          🗑️ Elimina chiave dal dispositivo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast di notifica dolce -->
+  <div id="toast-el" class="toast-feedback"></div>
+
+  <!-- ============================================================
+       SCRIPT APPLICATIVO INTELLIGENTE & ROBUSTO
+       ============================================================ -->
+  <script src="script.js" defer></script>
+</body>
+</html>
