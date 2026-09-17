@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Invia · PISOLO & Micio</title>
+<style>
+  body{font-family:system-ui;max-width:420px;margin:40px auto;padding:0 16px}
+  textarea,input,button{width:100%;font-size:16px;padding:10px;margin:6px 0;box-sizing:border-box}
+  button{background:#d6336c;color:#fff;border:0;border-radius:8px;cursor:pointer}
+  #esito{margin-top:10px;font-size:14px}
+</style>
+</head>
+<body>
+  <h2>Invia una notifica 💌</h2>
+  <input id="titolo" placeholder="Titolo (opzionale)">
+  <textarea id="testo" rows="4" placeholder="Scrivi il messaggio..."></textarea>
+  <button id="invia">Invia adesso</button>
+  <div id="esito"></div>
+
+<script>
+const WORKER_URL = "https://pisolo-micio-push.TUO-SOTTODOMINIO.workers.dev";
+
+// Password semplice: chiesta una volta e usata come token verso il Worker.
+let token = sessionStorage.getItem("send_token");
+if (!token) {
+  token = prompt("Password:");
+  if (token) sessionStorage.setItem("send_token", token);
+}
+
+document.getElementById("invia").onclick = async () => {
+  const message = document.getElementById("testo").value.trim();
+  const title = document.getElementById("titolo").value.trim();
+  const esito = document.getElementById("esito");
+  if (!message) { esito.textContent = "Scrivi un messaggio."; return; }
+  esito.textContent = "Invio...";
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Auth-Token": token },
+      body: JSON.stringify({ message, title })
+    });
+    if (res.status === 401) {
+      sessionStorage.removeItem("send_token");
+      esito.textContent = "Password errata. Ricarica la pagina.";
+      return;
+    }
+    const data = await res.json();
+    esito.textContent = res.ok ? "Inviata! 💛" : ("Errore: " + JSON.stringify(data));
+  } catch (e) { esito.textContent = "Errore rete: " + e.message; }
+};
+</script>
+</body>
+</html>
