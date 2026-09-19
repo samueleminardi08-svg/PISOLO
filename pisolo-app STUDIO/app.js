@@ -1899,6 +1899,85 @@
       return HARDCODED_GEMINI_API_KEY || localStorage.getItem('user_gemini_api_key') || '';
     }
 
+    // Gestione Modale Popup Chiave IA Gemini
+    window.openApiKeyModal = function() {
+      const backdrop = document.getElementById('modal-api-key-backdrop');
+      if (backdrop) {
+        backdrop.style.display = 'flex';
+        updateFooterApiKeyUI();
+        setTimeout(() => {
+          const input = document.getElementById('input-gemini-key-field');
+          if (input) input.focus();
+        }, 100);
+      }
+    };
+
+    window.closeApiKeyModal = function(e) {
+      if (e && e.target && e.target !== document.getElementById('modal-api-key-backdrop')) {
+        return;
+      }
+      const backdrop = document.getElementById('modal-api-key-backdrop');
+      if (backdrop) backdrop.style.display = 'none';
+    };
+
+    window.toggleKeyVisibility = function() {
+      const input = document.getElementById('input-gemini-key-field');
+      const btn = document.getElementById('btn-toggle-key-visibility');
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (btn) btn.textContent = '🔒';
+      } else {
+        input.type = 'password';
+        if (btn) btn.textContent = '👁️';
+      }
+    };
+
+    window.saveUserApiKeyFromModal = function() {
+      const input = document.getElementById('input-gemini-key-field');
+      if (!input) return;
+      const key = input.value.trim();
+      if (!key) {
+        showToast("Inserisci prima una chiave valida! ⚠️");
+        return;
+      }
+      localStorage.setItem('user_gemini_api_key', key);
+      updateFooterApiKeyUI();
+      showToast("Chiave Gemini salvata! ✨ Abbracci IA attivi 💕");
+      startHugPrefetch(activeHugCategory);
+      setTimeout(() => {
+        closeApiKeyModal();
+      }, 500);
+    };
+
+    window.removeUserApiKeyFromModal = function() {
+      localStorage.removeItem('user_gemini_api_key');
+      const input = document.getElementById('input-gemini-key-field');
+      if (input) input.value = '';
+      updateFooterApiKeyUI();
+      showToast("Chiave rimossa. Verranno usati i pensieri classici 🌸");
+    };
+
+    function updateFooterApiKeyUI() {
+      const currentKey = getUserApiKey();
+      const input = document.getElementById('input-gemini-key-field');
+      const badge = document.getElementById('ai-key-status-badge');
+      if (input && currentKey) {
+        input.value = currentKey;
+      }
+      if (badge) {
+        if (currentKey) {
+          badge.textContent = 'Attiva ✅';
+          badge.style.background = '#DCFCE7';
+          badge.style.color = '#15803D';
+        } else {
+          badge.textContent = 'Inattiva';
+          badge.style.background = '#F3E8FF';
+          badge.style.color = '#7E22CE';
+        }
+      }
+    }
+
     function cleanGeneratedText(t) {
       if (!t) return '';
       return t.replace(/^["'“«]+|["'”»]+$/g, '').trim();
@@ -1908,9 +1987,11 @@
     // Ottimizzata per velocità: timeout aggressivo + modello flash-first + no ListModels fallback
     async function callGeminiDirect(apiKey, prompt, systemInstruction = null, maxTokens = 200) {
       const candidateModels = [
-        'gemini-2.0-flash',
-        'gemini-2.0-flash-exp',
-        'gemini-1.5-flash'
+        'gemini-2.5-flash',
+        'gemini-3.5-flash-lite',
+        'gemini-3-flash-preview',
+        'gemini-flash-latest',
+        'gemini-2.0-flash'
       ];
       let lastErr = null;
       let lastWorkingModel = null;
@@ -2151,6 +2232,9 @@
       // 🚀 Avvia il primo prefetch della dedica IA in background
       // così al primo click su "Ho bisogno di un abbraccio" è già pronta
       startHugPrefetch(null);
+
+      // Inizializza visualizzazione chiave nel footer
+      updateFooterApiKeyUI();
     });
 
     // Pulizia: se l'utente lascia la pagina, segnala al prefetch di ignorare il risultato

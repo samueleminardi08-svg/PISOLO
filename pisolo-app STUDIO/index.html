@@ -360,13 +360,18 @@
         Fatto per te con tutto l'affetto possibile ❤️
       </div>
       <div style="font-size: 12px; color: var(--deep-rose); font-weight: 800; margin-top: 4px;">
-        Pisolo 🦈 & Micio 🐱 • Sempre al tuo fianco
+        Pisolo 🦈 &amp; Micio 🐱 • Sempre al tuo fianco
       </div>
       <div style="margin-top: 10px;">
         <span onclick="openAutonomousLinkModal()" style="font-size: 12px; color: var(--pastel-blue-accent); font-weight: 700; cursor: pointer; text-decoration: underline;">
           🔗 Link sempre autonomo e istruzioni App
         </span>
       </div>
+        <div style="margin-top: 8px;">
+          <span onclick="openApiKeyModal()" style="font-size: 12px; color: #7E22CE; font-weight: 700; cursor: pointer; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">
+            <span>🗝️</span> Configura Chiave IA (per Abbracci infiniti)
+          </span>
+        </div>
       <div style="margin-top: 8px;">
         <span onclick="logoutApp()" style="font-size: 11.5px; color: var(--warm-text-secondary); cursor: pointer; text-decoration: underline;">
           🔒 Blocca app con password
@@ -555,6 +560,52 @@
     </div>
   </div>
 
+  <!-- ============================================================
+       MODALE POPUP CONFIGURAZIONE CHIAVE IA GEMINI
+       ============================================================ -->
+  <div class="modal-backdrop" id="modal-api-key-backdrop" onclick="closeApiKeyModal(event)" style="z-index:99999;">
+    <div class="modal-card" onclick="event.stopPropagation()" style="max-width:400px; padding:22px; text-align:left;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="font-size:16px; font-weight:800; color:#6B21A8; display:flex; align-items:center; gap:8px;">
+          <span>✨</span> Chiave IA per Abbracci &amp; Dediche
+        </div>
+        <button class="modal-close-trigger" aria-label="Chiudi finestra" onclick="closeApiKeyModal()">✕</button>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; background:#FAF5FF; padding:8px 12px; border-radius:12px; border:1px solid #E9D5FF;">
+        <span style="font-size:12px; color:var(--warm-text-secondary); font-weight:600;">Stato Connessione:</span>
+        <span id="ai-key-status-badge" style="font-size:11px; font-weight:700; padding:3px 10px; border-radius:10px; background:#F3E8FF; color:#7E22CE;">
+          Inattiva
+        </span>
+      </div>
+
+      <div style="font-size:13px; color:var(--warm-text-primary); line-height:1.5; margin-bottom:14px;">
+        Con la tua chiave Gemini, ogni volta che premi <strong>"Ho bisogno di un abbraccio"</strong> Pisolo e Micio creeranno un pensiero d'amore e conforto sempre unico e originale! 💕
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-size:11.5px; font-weight:700; color:#7E22CE; margin-bottom:6px;">
+          Chiave API Gemini (AQ... o AIza...):
+        </label>
+        <div style="display:flex; gap:8px;">
+          <input type="password" id="input-gemini-key-field" placeholder="Incolla qui la chiave..." style="flex:1; padding:10px 12px; border-radius:12px; border:1.5px solid #D8B4FE; font-size:12.5px; font-family:monospace; outline:none; background:#FFFFFF; color:var(--warm-text-primary);" />
+          <button type="button" onclick="toggleKeyVisibility()" id="btn-toggle-key-visibility" title="Mostra/Nascondi" style="background:#FAF5FF; border:1.5px solid #D8B4FE; border-radius:12px; padding:0 12px; cursor:pointer; font-size:14px;">
+            👁️
+          </button>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button type="button" class="modal-btn-primary" onclick="saveUserApiKeyFromModal()" style="width:100%; padding:12px; font-size:13.5px; font-weight:800; background:linear-gradient(135deg, #7E22CE, #9333EA);">
+          💾 Salva e Attiva Abbracci IA
+        </button>
+        <button type="button" class="modal-btn-tonal" onclick="removeUserApiKeyFromModal()" style="width:100%; padding:9px; font-size:12px; color:var(--warm-text-secondary);">
+          🗑️ Rimuovi Chiave
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Input file nascosti per caricamento foto -->
   <input type="file" id="upload-hero-input" accept="image/*" style="display:none;" onchange="handleHeroUpload(event)">
 
@@ -567,6 +618,6 @@
   <!-- ============================================================
        SCRIPT APPLICATIVO INTELLIGENTE & ROBUSTO
        ============================================================ -->
-  <script src="script.js" defer></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
