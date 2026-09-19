@@ -1,0 +1,10 @@
+name = "pisolo-micio-push"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# Orari delle notifiche (fuso orario UTC):
+# Per le 15:00 e le 20:00 ora italiana:
+# - Ora Legale / Estate (CEST = UTC+2): ore 13:00 UTC e ore 18:00 UTC
+# - Ora Solare / Inverno (CET = UTC+1): ore 14:00 UTC e ore 19:00 UTC
+[triggers]
+crons = ["0 13 * * *", "0 18 * * *"]
