@@ -1157,7 +1157,7 @@ REGOLE TASSATIVE:
       const overlayLayer = document.getElementById('app-ambient-overlay');
 
       // Imposta lo sfondo visivo a tutto schermo con la foto HD del luogo e velatura morbida
-      document.body.style.backgroundImage = `linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.35)), url('${bg.image}')`;
+      document.body.style.backgroundImage = `linear-gradient(rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.18)), url('${bg.image}')`;
       document.body.style.backgroundSize = 'cover';
       document.body.style.backgroundPosition = 'center center';
       document.body.style.backgroundAttachment = 'fixed';
