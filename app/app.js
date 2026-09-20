@@ -2332,7 +2332,7 @@ REGOLE TASSATIVE:
       // Tasto Random in cima
       const randomItem = document.createElement('div');
       randomItem.className = 'bg-dropdown-item';
-      randomItem.innerHTML = <span style="font-size:16px;">??</span> <span style="font-size:13px;">Sorprendimi (Casuale)</span>;
+      randomItem.innerHTML = '<span style="font-size:16px;">🔄</span> <span style="font-size:13px;">Sorprendimi (Casuale)</span>';
       randomItem.onclick = () => {
         cycleNextBackground();
         closeBgDropdown();
@@ -2346,7 +2346,7 @@ REGOLE TASSATIVE:
         if (idx === currentBgIndex) {
           item.classList.add('active');
         }
-        item.innerHTML = <span style="font-size:16px;"> + bg.emoji + </span> <span style="font-size:13px;"> + bg.name + </span>;
+        item.innerHTML = '<span style="font-size:16px;">' + bg.emoji + '</span> <span style="font-size:13px;">' + bg.name + '</span>';
         item.onclick = () => {
           selectBackground(idx);
           closeBgDropdown();
