@@ -3,3 +3,5 @@ Thumbs.db
 .DS_Store
 node_modules/
 *.log
+update-os.js
+test-push.js
