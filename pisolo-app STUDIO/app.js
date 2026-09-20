@@ -874,38 +874,75 @@
     // 5. MODALE ABBRACCIO VIRTUALE (con prefetch IA)
     let isAiHugGenerating = false;
     let recentAiHugs = [];
+    try {
+      const stored = localStorage.getItem('pisolo_ai_hugs_history');
+      if (stored) recentAiHugs = JSON.parse(stored);
+    } catch(e) {}
+
+    function addAiHugToHistory(text) {
+      recentAiHugs.push(text);
+      if (recentAiHugs.length > 40) {
+        recentAiHugs.shift(); // FIFO max 40
+      }
+      try {
+        localStorage.setItem('pisolo_ai_hugs_history', JSON.stringify(recentAiHugs));
+      } catch(e) {}
+    }
 
     // === PREFETCH SYSTEM ===
-    // Cache per la dedica pre-generata (dedica + foto pronte insieme)
     let prefetchedHug = null;       // Risultato pronto: { msg, image } oppure null
     let prefetchHugPromise = null;  // Promise in corso (per evitare doppie chiamate)
     let prefetchAborted = false;    // Flag di pulizia se l'utente naviga via
 
+    // Motore di Variazione Tematica e Linguaggio Semplice
+    function buildDynamicPrompt(category, recentHugs) {
+      const mood = category ? category + " profondo e dolce" : 'conforto e rassicurazione';
+      
+      const historyStr = recentHugs.length > 0 
+        ? "\n\nCRONOLOGIA DELLE ULTIME DEDICHE (NON RIPETERE STRUTTURE, INCIPIT O IDEE SIMILI):\n- " + recentHugs.join("\n- ") 
+        : "";
+      
+      const thematicVariations = [
+        "Punta sulla **semplice presenza**: fatele capire che siete lì vicino a lei, in silenzio, e che non andate via.",
+        "Parla di **piccole cose quotidiane e comfort**: una coperta calda, il rumore della pioggia, rannicchiarsi sul divano.",
+        "Concentrati sulle **sue qualità**: ricordale quanto è preziosa, forte o speciale per le persone che ama.",
+        "Esprimi un forte **desiderio di esserci fisicamente**: dille quanto vorreste stringerla davvero in questo preciso istante.",
+        "Fai una **rassicurazione diretta**: dille semplicemente che tutto si sistemerà e che può abbassare la guardia.",
+        "Parla di **riposo mentale**: invitala a chiudere gli occhi, fare un bel respiro e non pensare a nulla per un minuto.",
+        "Usa un approccio **leggero e domestico**: come Micio che fa le fusa rumorose o Pisolo che si accoccola vicino a lei."
+      ];
+      const randomTheme = thematicVariations[Math.floor(Math.random() * thematicVariations.length)];
+
+      return `Sei Pisolo 🦈 (squaletto) e Micio 🐱 (gattino). Dai un abbraccio virtuale (tema: ${mood}).
+${historyStr}
+
+REGOLE TASSATIVE:
+1. LINGUAGGIO SEMPLICE: Usa un italiano quotidiano, diretto e senza fronzoli. Parla come se scrivessi un messaggio vero a una persona cara. NESSUN termine poetico, aulico o esageratamente ricercato (es. niente "abissi", "vellutato", "infinito", "stelle marine").
+2. IDEA DI FONDO: ${randomTheme}
+3. STRUTTURA UNICA: Evita di iniziare sempre allo stesso modo. Varia il modo in cui costruisci la frase per renderla diversa e spontanea.
+4. LUNGHEZZA: Non c'è limite, ma deve essere naturale (circa 20-40 parole). Scrivi solo la frase, senza asterischi o descrizioni tra parentesi.`;
+    }
+
     // Genera una dedica IA in background e la salva nella cache
     function startHugPrefetch(category) {
-      // Non avviare se già in corso o se manca la chiave
       if (prefetchHugPromise) return;
       const userKey = getUserApiKey();
       if (!userKey || typeof callGeminiDirect !== 'function') return;
 
       prefetchAborted = false;
-      const prefetchImage = getNextHugImage(); // Pre-assegna anche la foto
+      const prefetchImage = getNextHugImage(); 
 
       prefetchHugPromise = (async () => {
         try {
-          const mood = category ? category + " profondo e dolce" : 'conforto, rassicurazione e dolcezza infinita';
-          const avoid = recentAiHugs.length > 0 ? " Diversa da queste: " + recentAiHugs.slice(-3).join(" | ") : "";
-          const prompt = `Sei Pisolo 🦈 (squaletto) e Micio 🐱 (gattino). Dai un abbraccio virtuale breve, rassicurante e unico (tema: ${mood}).${avoid} Scrivi solo la frase dell'abbraccio in italiano, senza asterischi (max 35 parole).`;
+          const prompt = buildDynamicPrompt(category, recentAiHugs);
+          const directRes = await callGeminiDirect(userKey, prompt, 120);
 
-          const directRes = await callGeminiDirect(userKey, prompt, 60);
-
-          // Se l'utente ha navigato via nel frattempo, ignora il risultato
           if (prefetchAborted) { prefetchHugPromise = null; return; }
 
           if (directRes && directRes.success && directRes.text) {
             const generatedText = typeof cleanGeneratedText === 'function' ? cleanGeneratedText(directRes.text) : directRes.text;
             if (generatedText) {
-              recentAiHugs.push(generatedText);
+              addAiHugToHistory(generatedText);
               prefetchedHug = {
                 testo: generatedText,
                 autore: "Pisolo 🦈 & Micio 🐱 (con IA ✨)",
@@ -917,7 +954,7 @@
             }
           }
         } catch (e) {
-          // Errore silenzioso in background: non mostrare nulla all'utente
+          // Errore silenzioso in background
         }
         prefetchHugPromise = null;
       })();
@@ -925,14 +962,11 @@
 
     // Consuma la cache o attende il prefetch in corso; fallback a generazione live
     async function getHugFromCacheOrGenerate(category) {
-      // 1. Cache pronta → la consuma istantaneamente
       if (prefetchedHug) {
         const cached = prefetchedHug;
         prefetchedHug = null;
         return cached;
       }
-
-      // 2. Prefetch in corso → attendi quello (senza lanciarne un altro)
       if (prefetchHugPromise) {
         await prefetchHugPromise;
         if (prefetchedHug) {
@@ -941,20 +975,14 @@
           return cached;
         }
       }
-
-      // 3. Nessun prefetch disponibile → genera al volo (prima volta o dopo errore)
-      const aiMsg = await fetchAiHug(category);
-      return aiMsg;
+      return await fetchAiHug(category);
     }
 
     async function fetchAiHug(category) {
       const userKey = getUserApiKey();
       if (!userKey || typeof callGeminiDirect !== 'function') return null;
 
-      const mood = category ? category + " profondo e dolce" : 'conforto, rassicurazione e dolcezza infinita';
-      const avoid = recentAiHugs.length > 0 ? " Diversa da queste: " + recentAiHugs.slice(-3).join(" | ") : "";
-      const prompt = `Sei Pisolo 🦈 (squaletto) e Micio 🐱 (gattino). Dai un abbraccio virtuale breve, rassicurante e unico (tema: ${mood}).${avoid} Scrivi solo la frase dell'abbraccio in italiano, senza asterischi (max 35 parole).`;
-
+      const prompt = buildDynamicPrompt(category, recentAiHugs);
       let generatedText = '';
       try {
         const directRes = await callGeminiDirect(userKey, prompt, 120);
@@ -966,7 +994,7 @@
       }
       
       if (generatedText) {
-        recentAiHugs.push(generatedText);
+        addAiHugToHistory(generatedText);
         return {
            testo: generatedText,
            autore: "Pisolo 🦈 & Micio 🐱 (con IA ✨)",
@@ -1986,12 +2014,16 @@
     // Chiamata diretta e sicura a Google Gemini da browser (CORS abilitato nativamente da Google)
     // Ottimizzata per velocità: timeout aggressivo + modello flash-first + no ListModels fallback
     async function callGeminiDirect(apiKey, prompt, systemInstruction = null, maxTokens = 200) {
+      if (typeof systemInstruction === 'number') {
+        maxTokens = systemInstruction;
+        systemInstruction = "Rispondi SEMPRE e SOLO in italiano. Non usare mai l'inglese.";
+      }
       const candidateModels = [
-        'gemini-2.5-flash',
+        'gemini-3.1-flash-lite',
         'gemini-3.5-flash-lite',
         'gemini-3-flash-preview',
-        'gemini-flash-latest',
-        'gemini-2.0-flash'
+        'gemini-3.6-flash',
+        'gemini-flash-latest'
       ];
       let lastErr = null;
       let lastWorkingModel = null;
@@ -2024,7 +2056,7 @@
               topP: 0.95
             }
           };
-          if (systemInstruction) {
+          if (systemInstruction && typeof systemInstruction === 'string') {
             payload.systemInstruction = {
               parts: [{ text: systemInstruction }]
             };
