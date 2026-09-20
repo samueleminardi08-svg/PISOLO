@@ -14,7 +14,7 @@
   <script>
     // Pulizia aggressiva del vecchio Service Worker
     function doRedirect() {
-      window.location.replace('pisolo-app%20STUDIO/');
+      window.location.replace('app/');
     }
 
     if ('serviceWorker' in navigator) {
@@ -22,8 +22,8 @@
         let unregistrations = [];
         for (let reg of registrations) {
           // Deregistra i vecchi worker legati alla root di /PISOLO/ (la vecchia app)
-          // ma NON deregistra quello nuovo su /PISOLO/pisolo-app STUDIO/ se per caso ci fosse
-          if (!reg.scope.includes('pisolo-app')) {
+          // ma NON deregistra quello nuovo su /PISOLO/app/ se per caso ci fosse
+          if (!reg.scope.includes('/app/')) {
             unregistrations.push(reg.unregister());
           }
         }
