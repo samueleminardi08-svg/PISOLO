@@ -1171,15 +1171,11 @@ REGOLE TASSATIVE:
         overlayLayer.style.opacity = '1';
       }
 
-      // Aggiorna la finestra panoramica "Il tuo Luogo di Pace oggi" in primo piano
-      const heroImg = document.getElementById('place-hero-img');
-      const heroEmoji = document.getElementById('place-hero-emoji');
-      const heroTitle = document.getElementById('place-hero-title');
-      const heroDesc = document.getElementById('place-hero-desc');
-      if (heroImg) heroImg.style.backgroundImage = `url('${bg.image}')`;
-      if (heroEmoji) heroEmoji.textContent = bg.emoji;
-      if (heroTitle) heroTitle.textContent = bg.name;
-      if (heroDesc) heroDesc.textContent = bg.place;
+      // Aggiorna l'immagine del bottone del menu a tendina
+      const bgToggleBtn = document.getElementById('bg-dropdown-toggle-btn');
+      if (bgToggleBtn) {
+        bgToggleBtn.style.backgroundImage = 'url("' + bg.image + '")';
+      }
 
       const label = document.getElementById('ambient-bg-name-label');
       if (label) {
@@ -2332,7 +2328,11 @@ REGOLE TASSATIVE:
       // Tasto Random in cima
       const randomItem = document.createElement('div');
       randomItem.className = 'bg-dropdown-item';
-      randomItem.innerHTML = '<span style="font-size:16px;">🔄</span> <span style="font-size:13px;">Sorprendimi (Casuale)</span>';
+      randomItem.innerHTML = '<div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #fce4ec, #f3e5f5); display:flex; align-items:center; justify-content:center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 22px;">🔄</div>' + 
+                             '<div style="display:flex; flex-direction:column; justify-content:center; flex:1;">' +
+                               '<div style="font-weight:800; font-size:14.5px; color:var(--deep-rose);">Sorprendimi (Casuale)</div>' +
+                               '<div style="font-size:11.5px; color:var(--warm-text-secondary); line-height:1.2; margin-top:2px;">Sfondo casuale ad ogni clic</div>' +
+                             '</div>';
       randomItem.onclick = () => {
         cycleNextBackground();
         closeBgDropdown();
@@ -2346,7 +2346,11 @@ REGOLE TASSATIVE:
         if (idx === currentBgIndex) {
           item.classList.add('active');
         }
-        item.innerHTML = '<span style="font-size:16px;">' + bg.emoji + '</span> <span style="font-size:13px;">' + bg.name + '</span>';
+        item.innerHTML = '<div style="width: 48px; height: 48px; border-radius: 12px; background-image: url(\'' + bg.image + '\'); background-size: cover; background-position: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>' +
+                         '<div style="display:flex; flex-direction:column; justify-content:center; flex:1;">' +
+                           '<div style="font-weight:700; font-size:14px; color:var(--warm-text-primary);"><span style="margin-right:6px; font-size:15px;">' + bg.emoji + '</span>' + bg.name + '</div>' +
+                           '<div style="font-size:11.5px; color:var(--warm-text-secondary); line-height:1.2; margin-top:2px; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">' + bg.place + '</div>' +
+                         '</div>';
         item.onclick = () => {
           selectBackground(idx);
           closeBgDropdown();
