@@ -2,18 +2,54 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=pisolo-app%20STUDIO/">
   <meta name="robots" content="noindex">
-  <title>PISOLO – Redirect</title>
+  <title>PISOLO - Redirect</title>
   <style>
     body { margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #FCE4EC; font-family: sans-serif; }
     p { color: #D81B60; font-size: 1.1rem; }
   </style>
 </head>
 <body>
-  <p>Caricamento in corso…</p>
+  <p>Rimozione vecchia versione in corso...</p>
   <script>
-    window.location.replace('pisolo-app%20STUDIO/');
+    // Pulizia aggressiva del vecchio Service Worker
+    function doRedirect() {
+      window.location.replace('pisolo-app%20STUDIO/');
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        let unregistrations = [];
+        for (let reg of registrations) {
+          // Deregistra i vecchi worker legati alla root di /PISOLO/ (la vecchia app)
+          // ma NON deregistra quello nuovo su /PISOLO/pisolo-app STUDIO/ se per caso ci fosse
+          if (!reg.scope.includes('pisolo-app')) {
+            unregistrations.push(reg.unregister());
+          }
+        }
+        
+        // Pulizia anche delle vecchie cache per essere sicuri
+        caches.keys().then(function(cacheNames) {
+          let cacheDeletions = [];
+          cacheNames.forEach(function(cacheName) {
+             // La nuova app usa 'pisolo-cache-v24', cancelliamo eventuali vecchie
+             if (cacheName.startsWith('pisolo-cache-') && cacheName !== 'pisolo-cache-v24') {
+                 cacheDeletions.push(caches.delete(cacheName));
+             }
+          });
+          
+          Promise.all([...unregistrations, ...cacheDeletions])
+            .then(doRedirect)
+            .catch(doRedirect);
+        }).catch(doRedirect);
+        
+      }).catch(doRedirect);
+      
+      // Fallback di sicurezza se la promise si incastra
+      setTimeout(doRedirect, 1500);
+    } else {
+      doRedirect();
+    }
   </script>
 </body>
 </html>
