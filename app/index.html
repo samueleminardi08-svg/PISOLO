@@ -125,10 +125,29 @@
             <h1>PISOLO & MICIO <span>❤️</span></h1>
             <div class="header-subtitle" id="header-mascot-status">Il tuo porto sicuro e silenzioso con Pisolo & Micio</div>
           </div>
-          <!-- Avatar di Pisolo & Micio -->
-          <div class="mascot-avatar-toggle" id="mascot-avatar-box" title="Pisolo e Micio" onclick="toggleActiveMascot()">
-            <img id="mascot-avatar-img" src="assets/mascots/img_01_0a586335395e.jpg" alt="Mascotte">
-            <div class="mascot-badge-switch" id="mascot-badge-name">Pisolo 🦈</div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <!-- Bottone Sfondi a Tendina -->
+            <div style="position:relative;">
+              <button id="bg-dropdown-toggle-btn" type="button" onclick="toggleBgDropdown(event)" title="Cambia Sfondo" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;">
+                🖼️
+              </button>
+              
+              <!-- Menù a tendina Sfondi -->
+              <div id="bg-dropdown-menu" style="position:absolute; right:0; top:52px; background:rgba(255,255,255,0.98); backdrop-filter:blur(10px); border-radius:18px; box-shadow:0 8px 32px rgba(0,0,0,0.18); width:250px; z-index:1000; overflow:hidden; border:1px solid rgba(0,0,0,0.08); max-height:400px; display:flex; flex-direction:column; visibility:hidden; opacity:0; transition:opacity 0.2s ease, transform 0.2s ease; transform:translateY(-10px);">
+                <div style="padding:12px; border-bottom:1px solid rgba(0,0,0,0.05); font-weight:700; color:var(--deep-rose); text-align:center; font-size:13px;">
+                  Scegli il tuo sfondo
+                </div>
+                <div style="padding:6px; display:flex; flex-direction:column; gap:4px; overflow-y:auto; flex:1;" id="bg-dropdown-list">
+                  <!-- Popolato da JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Avatar di Pisolo & Micio -->
+            <div class="mascot-avatar-toggle" id="mascot-avatar-box" title="Pisolo e Micio" onclick="toggleActiveMascot()">
+              <img id="mascot-avatar-img" src="assets/mascots/img_01_0a586335395e.jpg" alt="Mascotte">
+              <div class="mascot-badge-switch" id="mascot-badge-name">Pisolo 🦈</div>
+            </div>
           </div>
         </div>
 

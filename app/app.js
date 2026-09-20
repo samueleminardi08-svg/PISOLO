@@ -2286,3 +2286,71 @@ REGOLE TASSATIVE:
         prefetchAborted = true;
       }
     });
+
+    // --- DROPDOWN SFONDI ---
+    function toggleBgDropdown(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('bg-dropdown-menu');
+      if (!menu) return;
+      
+      const isHidden = menu.style.visibility === 'hidden' || menu.style.visibility === '';
+      if (isHidden) {
+        renderBgDropdownList();
+        menu.style.visibility = 'visible';
+        menu.style.opacity = '1';
+        menu.style.transform = 'translateY(0)';
+      } else {
+        closeBgDropdown();
+      }
+    }
+
+    function closeBgDropdown() {
+      const menu = document.getElementById('bg-dropdown-menu');
+      if (!menu) return;
+      menu.style.opacity = '0';
+      menu.style.transform = 'translateY(-10px)';
+      setTimeout(() => {
+        menu.style.visibility = 'hidden';
+      }, 200);
+    }
+
+    // Chiudi cliccando fuori
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('bg-dropdown-menu');
+      const btn = document.getElementById('bg-dropdown-toggle-btn');
+      if (menu && menu.style.visibility === 'visible' && !menu.contains(e.target) && (!btn || !btn.contains(e.target))) {
+        closeBgDropdown();
+      }
+    });
+
+    function renderBgDropdownList() {
+      const list = document.getElementById('bg-dropdown-list');
+      if (!list) return;
+      
+      list.innerHTML = '';
+
+      // Tasto Random in cima
+      const randomItem = document.createElement('div');
+      randomItem.className = 'bg-dropdown-item';
+      randomItem.innerHTML = <span style="font-size:16px;">??</span> <span style="font-size:13px;">Sorprendimi (Casuale)</span>;
+      randomItem.onclick = () => {
+        cycleNextBackground();
+        closeBgDropdown();
+      };
+      list.appendChild(randomItem);
+
+      // Tutti gli sfondi
+      TRANQUIL_BACKGROUNDS.forEach((bg, idx) => {
+        const item = document.createElement('div');
+        item.className = 'bg-dropdown-item';
+        if (idx === currentBgIndex) {
+          item.classList.add('active');
+        }
+        item.innerHTML = <span style="font-size:16px;"> + bg.emoji + </span> <span style="font-size:13px;"> + bg.name + </span>;
+        item.onclick = () => {
+          selectBackground(idx);
+          closeBgDropdown();
+        };
+        list.appendChild(item);
+      });
+    }
