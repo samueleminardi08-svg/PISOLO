@@ -1,4 +1,3 @@
-importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
 
 // (install, activate, fetch handler, ecc. — non toccare)
 const CACHE_NAME = 'pisolo-micio-cache-v24';

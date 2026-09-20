@@ -27,52 +27,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <!-- Inizio Codice OneSignal -->
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-  <script>
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.init({
-        appId: "ef9407e7-ea6d-41d1-978c-21caa91530e8", // Sostituisci questo testo con l'App ID
-        serviceWorkerPath: "sw.js",
-        serviceWorkerParam: { scope: "./" },
-        notifyButton: {
-          enable: false
-        },
-        allowLocalhostAsSecureOrigin: true
-      });
-    });
-
-    function attivaNotifiche() {
-      window.OneSignalDeferred.push(async function(OneSignal) {
-        try {
-          await OneSignal.Notifications.requestPermission();
-          
-          if (Notification.permission === "granted") {
-            if (typeof showToast === 'function') showToast("Notifiche attivate con successo! 💖");
-            const btn = document.getElementById("btn-attiva-notifiche");
-            if (btn) {
-              btn.textContent = "Notifiche Attivate ✓";
-              btn.style.background = "#4CAF50";
-              btn.disabled = true;
-            }
-          } else {
-            if (typeof showToast === 'function') showToast("Permesso notifiche negato.", true);
-            const btn = document.getElementById("btn-attiva-notifiche");
-            if (btn) {
-              btn.textContent = "Permesso Negato ❌";
-              btn.style.opacity = "0.7";
-              btn.disabled = true;
-            }
-          }
-        } catch(e) {
-          console.warn("OneSignal non disponibile o errore:", e);
-          if (typeof showToast === 'function') showToast("Errore di connessione alle notifiche.", true);
-        }
-      });
-    }
-  </script>
-  <!-- Fine Codice OneSignal -->
 </head>
 <body class="locked">
   <!-- Livelli di sfondo rilassante e velatura morbida per massima tranquillità visiva -->
@@ -137,9 +91,6 @@
         </div>
       </div>
       <div class="welcome-title">Piccolo promemoria d'amore</div>
-      <button id="btn-attiva-notifiche" onclick="attivaNotifiche()" style="margin: 20px auto; display: block; padding: 10px 20px; border-radius: 8px; background: #D81B60; color: white; border: none; font-weight: bold; cursor: pointer;">
-        🔔 Attiva le notifiche di Pisolo
-      </button>
       <div class="welcome-body">
         Ciao piccola mia. Ricordati sempre che <strong>la cosa che desidero di più è sentirti direttamente</strong>. 
         Se c'è qualcosa che non va, se ti senti giù o se hai solo bisogno di me, scrivimi o chiamami appena puoi: per te ci sono sempre.<br><br>
